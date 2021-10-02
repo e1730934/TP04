@@ -8,9 +8,10 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/etudiants', (req, res) => {
     res.send(listeEtudiant())
 })
-app.route(['/420-3D5/etudiants','/:identifiantCours/etudiants'])
+app.route(['/:identifiantCours/etudiants'])
     .get( (req, res) => {
-    res.send(listeEtudiantParCours())
+       cours = req.params.identifiantCours
+    res.send(listeEtudiantParCours(cours))
 })
 
     .post(function (req, res) {
@@ -40,7 +41,7 @@ app.route(['/420-3D5/etudiants','/:identifiantCours/etudiants'])
 
 app.listen(port, () => {
     console.log(`La liste de tout les étudiants peuvent être retrouvé sur http://localhost:${port}/etudiants`)
-    console.log(`La liste de tout les étudiants du cours 420-3D5 peuvent être retrouvé sur http://localhost:${port}/420-3D5/etudiants ou alors sur http://localhost:${port}/:identifiantCours/etudiants`)
+    console.log(`La liste de tout les étudiants du cours 420-3D5 peuvent être retrouvé sur http://localhost:${port}/420-3D5/etudiants`)
 })
 
 function listeEtudiant(){
@@ -67,7 +68,7 @@ function listeEtudiant(){
     }
     return lesEtudiants
 }
-function listeEtudiantParCours(coursSelectionner= '420-3D5'){
+function listeEtudiantParCours(coursSelectionner){
     let lesEtudiants = []
     let cours = departement.cours
     for (let i = 0; i < cours.length; i++) {
