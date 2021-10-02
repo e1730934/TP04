@@ -10,8 +10,8 @@ app.get('/etudiants', (req, res) => {
 })
 app.route(['/:identifiantCours/etudiants'])
     .get( (req, res) => {
-       cours = req.params.identifiantCours
-    res.send(listeEtudiantParCours(cours))
+       cours = req.params.identifiantCours;
+       res.send(listeEtudiantParCours(cours))
 })
 
     .post(function (req, res) {
@@ -39,9 +39,23 @@ app.route(['/:identifiantCours/etudiants'])
     res.send('Requête POST reçu');
 });
 
+app.route(['/:identifiantCours/:numeroEtudiant'])
+     .get( (req, res) => {
+         cours = req.params.identifiantCours;
+         numEtudiant = req.params.numeroEtudiant;
+         let info = infoEtudiant(cours, numEtudiant)
+         if (info !== null)
+             res.send(info)
+         else
+             res.status(404).send("L'étudiant n'existe pas dans le cours donnée.")
+     })
+
+
+
 app.listen(port, () => {
     console.log(`La liste de tout les étudiants peuvent être retrouvé sur http://localhost:${port}/etudiants`)
     console.log(`La liste de tout les étudiants du cours 420-3D5 peuvent être retrouvé sur http://localhost:${port}/420-3D5/etudiants`)
+    console.log(`Les informations de l'étudiant provenant d'un cours peuvent être retrouvé sur http://localhost:${port}/:identifiantCours/:numeroEtudiant`)
 })
 
 function listeEtudiant(){
@@ -79,4 +93,19 @@ function listeEtudiantParCours(coursSelectionner){
         }
     }
     return lesEtudiants
+}
+function infoEtudiant(cours, numEtudiant){
+    for (let i = 0; i <departement.cours.length ; i++) {
+        if(departement.cours[i].identifiant === cours){
+            for (let j = 0; j < departement.cours[i].etudiants.length ; j++) {
+                let etudiantSelectionner = departement.cours[i].etudiants[j]
+                if(etudiantSelectionner.numero === numEtudiant){
+                    return(departement.cours[i].etudiants[j])
+                }
+            }
+        }
+
+    }
+    return null
+
 }
