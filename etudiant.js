@@ -2,17 +2,41 @@ const express = require('express')
 const app = express()
 const departement = require("./données_dep");
 const port = 3000
-
+app.use(express.urlencoded({ extended: true }));
 
 
 app.get('/etudiants', (req, res) => {
     res.send(listeEtudiant())
 })
-
-app.get(['/420-3D5/etudiants','/:identifiantCours/etudiants'], (req, res) => {
+app.route(['/420-3D5/etudiants','/:identifiantCours/etudiants'])
+    .get( (req, res) => {
     res.send(listeEtudiantParCours())
 })
 
+    .post(function (req, res) {
+        let cours = departement.cours
+        for (let i = 0; i < cours.length; i++) {
+            if(cours[i].identifiant === '420-3D5'){
+                let nouveauEtudiant =
+                    {
+                        "numero": req.body.numero,
+                        "nom": req.body.nom,
+                        "prenom": req.body.prenom,
+                        "note": req.body.note
+                    }
+                for (let j = 0; j < cours[i].etudiants.length; j++) {
+                    if(nouveauEtudiant.numero === (cours[i].etudiants[j]).numero) {
+                        res.status(409).send("L'étudiant fait déja partie du cours")
+                    }
+
+                }
+                cours[i].etudiants.push(nouveauEtudiant)
+                res.send(nouveauEtudiant)
+
+            }
+        }
+    res.send('Requête POST reçu');
+});
 
 app.listen(port, () => {
     console.log(`La liste de tout les étudiants peuvent être retrouvé sur http://localhost:${port}/etudiants`)
@@ -27,7 +51,6 @@ function listeEtudiant(){
         let listeEtudiantCours = coursSelectionner.etudiants
         for (let j = 0; j < listeEtudiantCours.length; j++) {
             let etudiantSelectionner = Object.assign({},listeEtudiantCours[j])
-            console.log(typeof(etudiantSelectionner))
             delete etudiantSelectionner.note
             if(lesEtudiants.length===0){
                 lesEtudiants.push(etudiantSelectionner)
