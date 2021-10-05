@@ -134,9 +134,10 @@ function infoEtudiant(cours, numEtudiant) {
         if (donneDepartement.cours[i].identifiant === cours) {
             for (let j = 0; j < donneDepartement.cours[i].etudiants.length; j++) {
                 let etudiantSelectionner = donneDepartement.cours[i].etudiants[j];
-                if (etudiantSelectionner.numero === numEtudiant) {
-                    return (donneDepartement.cours[i].etudiants[j]);
-                }
+                if(etudiantSelectionner !== undefined)
+                    if (etudiantSelectionner.numero === numEtudiant) {
+                        return (donneDepartement.cours[i].etudiants[j]);
+                    }
             }
         }
 
