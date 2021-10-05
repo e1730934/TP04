@@ -11,10 +11,20 @@ router.get('/etudiants', function (req, res) {
 router.route(['/:identifiantCours/etudiants'])
     .get(function (req, res) {
         let cours = req.params.identifiantCours;
-        res.send(listeEtudiantParCours(cours));
+        let resultat = listeEtudiantParCours(cours);
+        if (resultat == null)
+            res.status(404).send("Le cours n'existe pas .");
+        else if( resultat === ("Aucun cours n'est définie"))
+            res.status(404).send("Aucun cours n'est définie");
+        else
+            res.send(listeEtudiantParCours(cours));
     })
 
     .post(function (req, res) {
+        if(donneDepartement.cours == null){
+            res.status(404).send("Aucun cours n'est définie");
+        }
+        else{
         let cours = donneDepartement.cours;
         for (let i = 0; i < cours.length; i++) {
             if (cours[i].identifiant === '420-3D5') {
@@ -36,7 +46,8 @@ router.route(['/:identifiantCours/etudiants'])
 
             }
         }
-        res.send('Requête POST reçu');
+            res.send('Requête POST reçu');
+        }
     });
 
 router.route(['/:identifiantCours/:numeroEtudiant', '/:identifiantCours/etudiant/:numeroEtudiant'])
@@ -54,20 +65,24 @@ router.route(['/:identifiantCours/:numeroEtudiant', '/:identifiantCours/etudiant
         let cours = req.params.identifiantCours;
         let numEtudiant = req.params.numeroEtudiant;
         let info = infoEtudiant(cours, numEtudiant);
-        if (info === null)
+        if (info == null)
             res.status(404).send("L'étudiant n'existe pas dans le cours donnée.");
+        else if (info === ("Aucun cours n'est définie"))
+            res.status(404).send("Aucun cours n'est définie");
         else {
             let suppressionEtudiant = deleteEtudiant(cours, numEtudiant);
             res.send(`Cours: ${donneDepartement.cours[suppressionEtudiant[1]].identifiant}, ${donneDepartement.cours[suppressionEtudiant[1]].titre} enseigné par ${donneDepartement.cours[suppressionEtudiant[1]].professeur}.\n${suppressionEtudiant[0]} `);
-            // res.send(suppressionEtudiant[0] + departement.cours[suppressionEtudiant[1]])
-            // res.send( departement.cours[suppressionEtudiant[1]].)
         }
 
     });
 
 function listeEtudiant() {
-    let lesEtudiants = [];
+
+    if(donneDepartement.cours == null){
+        return ("Aucun cours n'est définie");
+    }
     let cours = donneDepartement.cours;
+    let lesEtudiants = [];
     for (let i = 0; i < cours.length; i++) {
         let coursSelectionner = cours[i];
         let listeEtudiantCours = coursSelectionner.etudiants;
@@ -90,19 +105,31 @@ function listeEtudiant() {
 }
 
 function listeEtudiantParCours(coursSelectionner) {
-    let lesEtudiants = [];
+
+    if(donneDepartement.cours == null){
+        return ("Aucun cours n'est définie");
+    }
     let cours = donneDepartement.cours;
-    for (let i = 0; i < cours.length; i++) {
+    let lesEtudiants = [];
+    let coursTrouver = false;
+        for (let i = 0; i < cours.length; i++) {
         if (cours[i].identifiant === coursSelectionner) {
+            coursTrouver = true;
             for (let j = 0; j < (cours[i].etudiants).length; j++) {
                 lesEtudiants.push((cours[i]).etudiants[j]);
             }
         }
     }
+    if (coursTrouver === false){
+        return null;
+    }
     return lesEtudiants;
 }
 
 function infoEtudiant(cours, numEtudiant) {
+    if(donneDepartement.cours == null){
+        return ("Aucun cours n'est définie");
+    }
     for (let i = 0; i < donneDepartement.cours.length; i++) {
         if (donneDepartement.cours[i].identifiant === cours) {
             for (let j = 0; j < donneDepartement.cours[i].etudiants.length; j++) {
