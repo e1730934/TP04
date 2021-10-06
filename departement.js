@@ -1,12 +1,11 @@
-const express = require('express')
-const departement = require("./données_dep");
-const app = express()
-const port = 3000
+const express = require('express');
+const donneDepartement = require("./données_dep");
+const router = express.Router();
 
-app.get('/departement', (req, res) => {
-    res.send(departement)
-})
 
-app.listen(port, () => {
-    console.log(`Le département roule est en ligne sur http://localhost:${port}/departement`)
-})
+
+router.get('/departement',  function (req, res) {
+    res.send(donneDepartement);
+});
+
+module.exports=router;
