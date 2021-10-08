@@ -36,21 +36,24 @@ let departement = {
             "etudiants":
                 [
                     {
-                        numero:"123456789",
-                        nom:"Jean",
-                        prenom:"Richard",
-                        note:95
+                        "numero":"123456789",
+                        "nom":"Jean",
+                        "prenom":"Richard",
+                        "note":95
                     },
 
                     {
-                        numero:"231231233",
-                        nom:"Jeanne",
-                        prenom:"Cindy",
-                        note:100
+                        "numero":"231231233",
+                        "nom":"Jeanne",
+                        "prenom":"Cindy",
+                        "note":100
                     }
                 ]
         }
     ]
 };
+
+
+
 
 module.exports = departement
