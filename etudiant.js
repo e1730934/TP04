@@ -50,7 +50,7 @@ router.route(['/:identifiantCours/etudiants'])
         }
     });
 
-router.route(['/:identifiantCours/:numeroEtudiant', '/:identifiantCours/etudiant/:numeroEtudiant'])
+router.route(['/:identifiantCours/etudiant/:numeroEtudiant'])
 
     .get(function (req, res){
         let cours = req.params.identifiantCours;
