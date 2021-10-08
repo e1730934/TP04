@@ -1,8 +1,8 @@
 {
-  "name": "devoir_express",
+  "name": "tp04",
   "version": "1.0.0",
   "description": "",
-  "main": "ecole.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,5 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0"
   }
 }
