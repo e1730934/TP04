@@ -16,7 +16,8 @@ router.route(['/cours'])
         if(departement.cours){
             res.send(affiche_cours_dept(departement.cours))
         }
-        res.send('Ce departement est vide')
+        else
+            res.send('Ce departement est vide')
 
     })
 
@@ -79,7 +80,7 @@ router.patch('/cours/:identifiant', (req, res) => {
 router.delete('/cours/:identifiant', (req, res) => {
     let listecours = departement.cours
     var effaceIndex = listecours.findIndex(cours => cours.identifiant === req.params.identifiant)
-    if (effaceIndex == -1) {
+    if (effaceIndex === -1) {
         return res.status(404).send({ message: 'Not Found' });
     } else{
         res.send(departement.cours.splice(effaceIndex, 1));
@@ -99,7 +100,7 @@ function affiche_cours_dept(liste) {
 
 function info_cours(listeCours,identifiant){
     for (let i = 0 ; i < listeCours.length; i++ ){
-        if (listeCours[i].identifiant == identifiant){
+        if (listeCours[i].identifiant === identifiant){
             return listeCours[i]
         }
         
