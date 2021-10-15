@@ -1,6 +1,5 @@
 const departement =require ('./données_dep');
 const express = require('express');
-const { cours } = require('./données_dep');
 
 var router = express.Router();
 
@@ -9,102 +8,102 @@ router.get('/', (req, res) =>{
 
 });
 
-router.use(express.urlencoded({ extended: true }));
+router.use(express.json())
+router.use(express.urlencoded({extended: true}))
 
 router.route(['/cours'])
     .get (function (req, res){
         if(departement.cours){
-            res.send(affiche_cours_dept())
+            res.send(affiche_cours_dept(departement.cours))
         }
-        else
         res.send('Ce departement est vide')
 
     })
 
     .post(function (req, res){
-
+       
         let nouveau_cours = {
+
             "identifiant":req.body.identifiant,
             "titre":req.body.titre,
             "professeur":req.body.professeur,
-            "etudiants":[{
+            "etudiants":{
                 "numero":req.body.numero,
                 "nom":req.body.nom,
                 "prenom":req.body.prenom,
                 "note":req.body.note
-
-            }]
+            
+            }
         }
         let resultat = ajoutCours(departement.cours,nouveau_cours)
-        if (resultat = null )
+        if (resultat !== true )
             res.status(409).send("Le cours se trouve déjà dans la liste de cours ")
         else
-            return res.send(departement.cours)
-
-    });
+            return res.send (affiche_cours_dept (departement.cours))
+        
+        });
 
 
 router.get('/cours/:identifiant', (req, res) =>{
 
-    let identifiant = req.params.identifiant;
-    let resultat = info_cours(identifiant);
-    if (resultat == null)
-        res.status(404).send("Ce cours n'existe pas .");
-    else
+        let identifiant = req.params.identifiant;
+        let resultat = info_cours(departement.cours,identifiant);
+        if (resultat == null)
+            res.status(404).send("Ce cours n'existe pas .");
+        else
 
-        res.send(resultat );
+            res.send(resultat );
 
 });
 
 
 router.patch('/cours/:identifiant', (req, res) => {
     let listecours = departement.cours
-    const cours = listecours.find(listecours => listecours.identifiant === parseInt(req.params.identifiant));
-    if (!cours)
-        return res.status(404).send({ message: 'Not Found' })
-    else {
-        let resultat = modifier_cours(req.params.identifiant,req.body.professeur)
-        if (resultat !== 1) {
-            res.status(405).send("Impossible de modifier cet élément")
-        }
-        else {
-            cours.professeur = req.body.professeur
-            cours.titre = req.body.titre
-            res.send(info_cours(req.params.identifiant))
-        }
+    var indexCours = listecours.findIndex(cours => cours.identifiant === req.params.identifiant);
+    var {identifiant, titre, professeur, etudiants } = req.body
+    if (indexCours === -1) {
+        return res.status(404).send({ message: 'Not Found' });
     }
+    if (identifiant) 
+          res.send("impossible de modifier cet élément")
+    else{
+        if (titre) listecours[indexCours].titre = titre
+        if (professeur) listecours[indexCours].professeur = professeur
+        if (etudiants) listecours[indexCours].etudiants = etudiants
+        }
+    res.send(info_cours(listecours,req.params.identifiant))
+    
 });
 
 router.delete('/cours/:identifiant', (req, res) => {
-
-    var effaceIndex = departement.cours.findIndex(cours=> cours.titre == req.body.titre
-        || cours.id === parseInt(req.body.id));
-    if (effaceIndex !== -1) {
-        res.send(departement.cours.splice(effaceIndex, 1));
-    } else{
+    let listecours = departement.cours
+    var effaceIndex = listecours.findIndex(cours => cours.identifiant === req.params.identifiant)
+    if (effaceIndex == -1) {
         return res.status(404).send({ message: 'Not Found' });
+    } else{
+        res.send(departement.cours.splice(effaceIndex, 1));
     }
 });
 
 
 
-function affiche_cours_dept() {
+function affiche_cours_dept(liste) {
     var liste_cours = []
-    for (let i in departement.cours) {
-        delete (departement.cours[i].etudiants)
+    for (let i in liste) {
+        delete (liste[i].etudiants)
     }
-    liste_cours .push(departement.cours)
+    liste_cours.push(liste)
     return (liste_cours)
 }
 
-function info_cours(identifiant){
-    for (let i = 0 ; i < departement.cours.length; i++ ){
-        if (departement.cours[i].identifiant == identifiant){
-            return departement.cours[i]
+function info_cours(listeCours,identifiant){
+    for (let i = 0 ; i < listeCours.length; i++ ){
+        if (listeCours[i].identifiant == identifiant){
+            return listeCours[i]
         }
+        
 
-
-    }}
+}}
 
 function ajoutCours(liste,cours){
 
@@ -119,15 +118,6 @@ function ajoutCours(liste,cours){
 
 }
 
-function modifier_cours(identifiant,propriété) {
-    let élément_non_modifiable = parseInt(cours.identifiant)
-    let élémentmodifiable = parseInt(cours.propriété)
-    for (let i = 0; i < departement.cours.length; i++) {
-        if (departement.cours[i].identifiant == identifiant) {
-            if (élément_non_modifiable !== élémentmodifiable)
-                a = 1
-        }
-    }
-    return a
-}
-    module.exports = router;
+
+module.exports = router;
+
