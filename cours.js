@@ -36,8 +36,9 @@ router.route(['/cours'])
             }
         }
         let resultat = ajoutCours(departement.cours,nouveau_cours)
-        if (resultat !== true )
+        if (!resultat){
             res.status(409).send("Le cours se trouve déjà dans la liste de cours ")
+        }
         else
             return res.send (affiche_cours_dept (departement.cours))
         
@@ -65,7 +66,7 @@ router.patch('/cours/:identifiant', (req, res) => {
         return res.status(404).send({ message: 'Not Found' });
     }
     if (identifiant) 
-          res.send("impossible de modifier cet élément")
+          res.status(409).send("impossible de modifier l'identifiant d'un cours")
     else{
         if (titre) listecours[indexCours].titre = titre
         if (professeur) listecours[indexCours].professeur = professeur
@@ -112,9 +113,14 @@ function ajoutCours(liste,cours){
     for (let i = 0; i < liste.length ; i++) {
         if (cours.identifiant === liste[i].identifiant) {
             cours_selectionner = false
+            return cours_selectionner
+        
         }
     }
-    if (cours_selectionner === true ) liste.push(cours)
+    if (cours_selectionner === true ){
+         liste.push(cours)
+         return cours_selectionner
+    }
 
 }
 
