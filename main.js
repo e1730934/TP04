@@ -1,3 +1,4 @@
+// 10/10
 const departement = require('./departement.js');
 const etudiant = require('./etudiant');
 const cours = require('./cours');
