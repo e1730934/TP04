@@ -3,11 +3,12 @@ const donneDepartement = require("./données_dep");
 const router = express.Router();
 
 
-
+// 7/10
 router.get('/etudiants', function (req, res) {
     res.send(listeEtudiant());
 });
 
+//7/7
 router.route(['/:identifiantCours/etudiants'])
     .get(function (req, res) {
         let cours = req.params.identifiantCours;
@@ -19,7 +20,8 @@ router.route(['/:identifiantCours/etudiants'])
         else
             res.send(listeEtudiantParCours(cours));
     })
-
+    
+    // 5.5/8
     .post(function (req, res) {
         if(donneDepartement.cours == null){
             res.status(404).send("Aucun cours n'est définie");
@@ -27,7 +29,7 @@ router.route(['/:identifiantCours/etudiants'])
         else{
         let cours = donneDepartement.cours;
         for (let i = 0; i < cours.length; i++) {
-            if (cours[i].identifiant === '420-3D5') {
+            if (cours[i].identifiant === '420-3D5') { // pourquoi tu as hardcodé la valeur '420-3D5', tu devrais utiliser la valeur en entrée -2
                 let nouveauEtudiant =
                     {
                         "numero": req.body.numero,
@@ -46,12 +48,12 @@ router.route(['/:identifiantCours/etudiants'])
 
             }
         }
-            res.send('Requête POST reçu');
+            res.send('Requête POST reçu'); // C'est quoi le but de cette ligne? // -0.5
         }
     });
 
 router.route(['/:identifiantCours/etudiant/:numeroEtudiant'])
-
+    //7/7
     .get(function (req, res){
         let cours = req.params.identifiantCours;
         let numEtudiant = req.params.numeroEtudiant;
@@ -61,6 +63,7 @@ router.route(['/:identifiantCours/etudiant/:numeroEtudiant'])
         else
             res.status(404).send("L'étudiant n'existe pas dans le cours donnée.");
     })
+    // 9/10
     .delete(function (req, res) {
         let cours = req.params.identifiantCours;
         let numEtudiant = req.params.numeroEtudiant;
@@ -71,6 +74,7 @@ router.route(['/:identifiantCours/etudiant/:numeroEtudiant'])
             res.status(404).send("Aucun cours n'est définie");
         else {
             let suppressionEtudiant = deleteEtudiant(cours, numEtudiant);
+            // il faut retourner un objet, pas une chaine de caractère -1
             res.send(`Cours: ${donneDepartement.cours[suppressionEtudiant[1]].identifiant}, ${donneDepartement.cours[suppressionEtudiant[1]].titre} enseigné par ${donneDepartement.cours[suppressionEtudiant[1]].professeur}.\n${suppressionEtudiant[0]} `);
         }
 
@@ -79,7 +83,7 @@ router.route(['/:identifiantCours/etudiant/:numeroEtudiant'])
 function listeEtudiant() {
 
     if(donneDepartement.cours == null){
-        return ("Aucun cours n'est définie");
+        return ("Aucun cours n'est définie"); // Vous devez vous assurez de retourner les memes types. Ici tu retournes une chaine de caractere et plus bas, tu vas retourner un tableau
     }
     let cours = donneDepartement.cours;
     let lesEtudiants = [];
@@ -88,12 +92,12 @@ function listeEtudiant() {
         let listeEtudiantCours = coursSelectionner.etudiants;
         for (let j = 0; j < listeEtudiantCours.length; j++) {
             let etudiantSelectionner = Object.assign({}, listeEtudiantCours[j]);
-            delete etudiantSelectionner.note;
+            delete etudiantSelectionner.note; // C'est dangereux d'utiliser delete de cette façon puisque le delete est fait sur l'objet et que cette suppression est permanente 
             if (lesEtudiants.length === 0) {
                 lesEtudiants.push(etudiantSelectionner);
             } else {
                 for (let k = 0; k < lesEtudiants.length; k++) {
-                    if (etudiantSelectionner.numero !== (lesEtudiants[k])[0]) {
+                    if (etudiantSelectionner.numero !== (lesEtudiants[k])[0]) { // C'est quoi la valeur de (lesEtudiants[k])[0]. lesEtudiants[k] retourne un objet etudiant, le fait de faire [0] retorne undefined
                         lesEtudiants.push(etudiantSelectionner);
                         break;
                     }
